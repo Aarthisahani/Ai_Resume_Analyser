@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Resume Analyser</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .main-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .title {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            font-size: 2.5rem;
+        }
+        .upload-zone {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            background: #f8f7ff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .upload-zone:hover { background: #ede9ff; border-color: #764ba2; }
+        .upload-icon { font-size: 3rem; color: #667eea; }
+        textarea {
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 12px;
+            width: 100%;
+            transition: border 0.3s;
+        }
+        textarea:focus {
+            border-color: #667eea;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.2);
+        }
+        .btn-analyse {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 12px;
+            padding: 14px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-analyse:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102,126,234,0.5);
+            color: white;
+        }
+        .error-box {
+            background: #fff0f0;
+            border: 2px solid #ff4757;
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: #ff4757;
+        }
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #999;
+            margin: 15px 0;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e0e0e0;
+        }
+        label { font-weight: 600; color: #444; margin-bottom: 6px; display: block; }
+        .nav-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        .btn-history {
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 8px 18px;
+            color: #667eea;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .btn-history:hover { background: #667eea; color: white; }
+        .btn-logout {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 8px 18px;
+            color: #888;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .btn-logout:hover { background: #f0f0f0; color: #555; }
+    </style>
+</head>
+<body>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="main-card">
+
+                <div class="nav-top">
+                    <span class="text-muted" style="font-size:14px;">
+                        <i class="fas fa-user-circle me-1"></i>
+                        Hi, <strong>{{ request.user.username }}</strong>!
+                    </span>
+                    <div class="d-flex gap-2">
+                        <a href="/history/" class="btn-history">
+                            <i class="fas fa-history me-1"></i>History
+                        </a>
+                        <a href="/logout/" class="btn-logout">
+                            <i class="fas fa-sign-out-alt me-1"></i>Logout
+                        </a>
+                    </div>
+                </div>
+
+                <div class="text-center mb-4">
+                    <h1 class="title"><i class="fas fa-robot me-2"></i>AI Resume Analyser</h1>
+                    <p class="text-muted">Upload your resume and get instant AI feedback!</p>
+                </div>
+
+                {% if error %}
+                <div class="error-box mb-3">
+                    <i class="fas fa-exclamation-circle me-2"></i>{{ error }}
+                </div>
+                {% endif %}
+
+                <form method="POST" action="/analyse/" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="upload-zone mb-3" onclick="document.getElementById('fileInput').click()">
+                        <input type="file" id="fileInput" name="resume" accept=".pdf" style="display:none"
+                               onchange="document.getElementById('fileName').textContent = this.files[0].name">
+                        <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                        <h5 class="mt-2 mb-1">Drop your PDF here</h5>
+                        <p class="text-muted mb-0" id="fileName">or click to choose file</p>
+                    </div>
+
+                    <div class="divider">or paste text below</div>
+
+                    <div class="mb-3">
+                        <label><i class="fas fa-file-alt me-2 text-primary"></i>Resume Text</label>
+                        <textarea name="resume_text" rows="5" placeholder="Paste your resume text here..."></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label><i class="fas fa-briefcase me-2 text-success"></i>Job Description <span class="text-muted fw-normal">(optional)</span></label>
+                        <textarea name="job_desc" rows="3" placeholder="Paste job description for better ATS score..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-analyse">
+                        <i class="fas fa-magic me-2"></i>Analyse Resume →
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,5 @@
+django>=4.2
+anthropic
+python-dotenv
+PyPDF2
+pillow

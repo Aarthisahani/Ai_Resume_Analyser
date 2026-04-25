@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Resume Result</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .main-card {
+            background: white;
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .title {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+        .score-circle {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            box-shadow: 0 8px 25px rgba(102,126,234,0.5);
+        }
+        .score-circle .num {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: white;
+            line-height: 1;
+        }
+        .score-circle .out {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.8);
+        }
+        .mini-score {
+            background: #f8f7ff;
+            border-radius: 14px;
+            padding: 15px;
+            text-align: center;
+            border: 2px solid #ede9ff;
+        }
+        .mini-score .val {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+        .mini-score .lbl {
+            font-size: 0.75rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .section-card {
+            border: 2px solid #f0f0f0;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .section-title {
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 12px;
+            color: #555;
+        }
+        .tag {
+            display: inline-block;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            margin: 3px;
+            font-weight: 500;
+        }
+        .tag-green { background: #e6f9f0; color: #1a9e5c; border: 1.5px solid #b7ecd5; }
+        .tag-red { background: #fff0f0; color: #e74c3c; border: 1.5px solid #ffd0cc; }
+        .tag-blue { background: #f0f4ff; color: #667eea; border: 1.5px solid #c7d3ff; }
+        .list-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #f5f5f5;
+            font-size: 14px;
+            color: #444;
+        }
+        .list-item:last-child { border-bottom: none; }
+        .progress {
+            height: 10px;
+            border-radius: 10px;
+            background: #f0f0f0;
+        }
+        .progress-bar {
+            border-radius: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+        .btn-back {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 30px;
+            color: white;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.2s;
+        }
+        .btn-back:hover {
+            transform: translateY(-2px);
+            color: white;
+        }
+        .level-badge {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="main-card">
+
+                <div class="text-center mb-4">
+                    <h2 class="title"><i class="fas fa-chart-bar me-2"></i>Resume Analysis Report</h2>
+                    <span class="level-badge">{{ result.experience_level }}</span>
+                </div>
+
+                <div class="text-center mb-4">
+                    <div class="score-circle">
+                        <span class="num">{{ result.overall_score }}</span>
+                        <span class="out">/ 100</span>
+                    </div>
+                    <p class="text-muted mt-2 mb-0">Overall Score</p>
+                    <div class="progress mt-2" style="max-width:300px; margin:8px auto 0;">
+                        <div class="progress-bar" style="width:{{ result.overall_score }}%"></div>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-6">
+                        <div class="mini-score">
+                            <div class="val">{{ result.ats_score }}<small>/100</small></div>
+                            <div class="lbl"><i class="fas fa-robot me-1"></i>ATS Score</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="mini-score">
+                            <div class="val">{{ result.suggested_roles|length }}</div>
+                            <div class="lbl"><i class="fas fa-briefcase me-1"></i>Roles Suggested</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <div class="section-title"><i class="fas fa-check-circle me-2 text-success"></i>Skills Found</div>
+                    {% for skill in result.skills_found %}
+                        <span class="tag tag-green">{{ skill }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="section-card">
+                    <div class="section-title"><i class="fas fa-times-circle me-2 text-danger"></i>Missing Skills</div>
+                    {% for skill in result.missing_skills %}
+                        <span class="tag tag-red">{{ skill }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <div class="section-card h-100">
+                            <div class="section-title"><i class="fas fa-star me-2 text-warning"></i>Strengths</div>
+                            {% for s in result.strengths %}
+                                <div class="list-item">✅ {{ s }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="section-card h-100">
+                            <div class="section-title"><i class="fas fa-arrow-up me-2 text-primary"></i>Areas to Improve</div>
+                            {% for i in result.improvements %}
+                                <div class="list-item">⚡ {{ i }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <div class="section-title"><i class="fas fa-compass me-2 text-primary"></i>Suggested Roles</div>
+                    {% for role in result.suggested_roles %}
+                        <span class="tag tag-blue">{{ role }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="text-center mt-4">
+                    <a href="/" class="btn-back">
+                        <i class="fas fa-redo me-2"></i>Analyse Another Resume
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
