@@ -315,6 +315,7 @@ ai-resume-analyser/
 - [x] Email Reports
 - [ ] Deploy on Railway
 - [ ] AI Resume Builder
+
 - [ ] Compare 2 Resumes
 - [ ] Dark Mode
 - [ ] Chrome Extension
